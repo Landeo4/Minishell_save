@@ -6,7 +6,7 @@
 /*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 13:11:05 by tpotilli          #+#    #+#             */
-/*   Updated: 2024/02/06 17:25:01 by tpotilli         ###   ########.fr       */
+/*   Updated: 2024/02/07 11:13:14 by tpotilli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,13 +57,8 @@ int	ft_pipex(t_data	*data, int i,char **cmd_argument)
 				fprintf(stderr, "data->actual_path[%d] = %s\n", q, data->actual_path[q]);
 				q++;
 			}
-			while (data->n_redirs > i)
-			{
-				close(data->tab[i][2]);
-				// data->n_redirs--;
-				i++;
-			}
-			fprintf(stderr, "juste avant mon execve mon i = %d et path %s", i, data->actual_path[i]);
+			q = 0;
+			fprintf(stderr, "juste avant mon execve mon i = %d et path %s\n", i, data->actual_path[i]);
 			execve(data->actual_path[i], cmd_argument, data->pr->nv);
 			free_all_pipe(pipefd);
 			exit(0);
@@ -80,6 +75,7 @@ int	ft_pipex(t_data	*data, int i,char **cmd_argument)
 		i++;
 	}
 	free_all_pipe(pipefd);
+	free_all_fd(data);
 	return (0);
 }
 

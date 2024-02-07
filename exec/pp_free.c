@@ -6,7 +6,7 @@
 /*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 13:12:21 by tpotilli          #+#    #+#             */
-/*   Updated: 2024/02/06 16:48:57 by tpotilli         ###   ########.fr       */
+/*   Updated: 2024/02/07 11:13:57 by tpotilli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,5 +62,17 @@ void	free_single(t_data *data, char **cmd_argument, char *buf, char *fre)
 			i++;
 			data->n_redirs--;
 		}
+	}
+}
+
+void	free_all_fd(t_data *data)
+{
+	int		i;
+
+	i = 0;
+	while (data->n_redirs > i)
+	{
+		close(data->tab[i][2]);
+		i++;
 	}
 }

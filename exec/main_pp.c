@@ -6,14 +6,14 @@
 /*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 13:10:50 by tpotilli          #+#    #+#             */
-/*   Updated: 2024/02/07 09:38:39 by tpotilli         ###   ########.fr       */
+/*   Updated: 2024/02/07 11:14:59 by tpotilli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 // cat > test1 > test2 < test3 | wc
 /*
-**	This function takes as parameter: 
+**	This function takes as parameter:
 **
 **
 ** =====================================================
@@ -23,7 +23,7 @@
 */
 
 /*
-**	This function takes as parameter: 
+**	This function takes as parameter:
 **
 **	data -> the struct who contains all variables
 **  to exec our program

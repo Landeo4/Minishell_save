@@ -6,7 +6,7 @@
 /*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:55:02 by tpotilli          #+#    #+#             */
-/*   Updated: 2024/02/06 10:52:53 by tpotilli         ###   ########.fr       */
+/*   Updated: 2024/02/07 11:08:38 by tpotilli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,12 +95,12 @@ int	redirection_single(t_data *data)
 	}
 	if (data->n_redirs > 1)
 	{
-		if (redirection_single_1(data, first, last, verif) == -1)
+		if (redirection_dup_1(data, first, last) == -1)
 			return (-1);
 	}
 	else if (data->n_redirs == 1)
 	{
-		if (redirection_single_2(data, first, last, verif) == -1)
+		if (redirection_dup_2(data, first, last) == -1)
 			return (-1);
 	}
 	return (0);

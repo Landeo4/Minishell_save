@@ -6,7 +6,7 @@
 /*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 21:47:57 by tpotilli          #+#    #+#             */
-/*   Updated: 2024/02/06 12:54:33 by tpotilli         ###   ########.fr       */
+/*   Updated: 2024/02/07 11:06:04 by tpotilli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ int	redirection_manager(t_data *data, int i)
 	token = get_nb_redirs_ac(data->cmds[i]);
 	fprintf(stderr, "voici mon i dans redirection %d et mon token %d\n", i, token);
 	if (token > 0)
-		redirection_single_1(data, first, last, 0);
+		redirection_dup_1(data, first, last);
 	// if (token == 1)
 	// {
 	// 	dup2(data->tab[data->index_redirs][2], 0);

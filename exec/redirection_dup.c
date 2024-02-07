@@ -1,23 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redirection_single.c                               :+:      :+:    :+:   */
+/*   redirection_dup.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/01 17:10:46 by tpotilli          #+#    #+#             */
-/*   Updated: 2024/02/06 12:39:33 by tpotilli         ###   ########.fr       */
+/*   Updated: 2024/02/07 11:10:48 by tpotilli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int redirection_single_1(t_data *data, int first, int last, int verif)
+int redirection_dup_1(t_data *data, int first, int last)
 {
 	int		i;
 
 	i = 0;
-	(void)verif;
 	fprintf(stderr, "dans ma redirection mon first %d et end %d\n", first, last);
 	if (first == -1)
 	{
@@ -39,20 +38,21 @@ int redirection_single_1(t_data *data, int first, int last, int verif)
 		if (dup2(data->tab[last][2], 1) < 0)
 			return (close(data->tab[data->index_redirs][2]), printf("problem with dup2 1"), -1);
 	}
+	fprintf(stderr, "JE VAIS CLOSE MES FD\n");
 	while (data->n_redirs > i)
 	{
 		close(data->tab[i][2]);
 		// data->n_redirs--;
 		i++;
 	}
+	fprintf(stderr, "J'AI CLOSE MES FD %d\n", i);
 		// close(data->tab[last][2]);
 	return (0);
 }
 
-int redirection_single_2(t_data *data, int first, int last, int verif)
+int redirection_dup_2(t_data *data, int first, int last)
 {
 	char	*path;
-	(void)verif;
 	(void)first;
 	(void)last;
 	path = NULL;
