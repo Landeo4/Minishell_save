@@ -6,14 +6,26 @@
 /*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 13:10:50 by tpotilli          #+#    #+#             */
-/*   Updated: 2024/02/07 11:14:59 by tpotilli         ###   ########.fr       */
+/*   Updated: 2024/02/20 14:48:04 by tpotilli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 // cat > test1 > test2 < test3 | wc
+// ls > out > out1 > out2 < Makefile | cat < Makefile
+// cat > test1 > test2 < test3 | wc > test4 < test5 | wc > test6
+// donc la mon probleme est que a ma deuxieme boucle, mon fd est a la pos 0
+// donc il est detecter comme etant au meme endroit que le reste
+// pour la cmd au dessus, il faut que dans out2 il y est un ls
+// et que dans mon terminal il y ait le cat makefile
+// peut etre ls ecrit proprement  dans out2 mais que tout se fait concatener
+// par cat < makefile qui ecrit le makefile dans out2
+// si plsuieurs pipe faire attention au input a la place du pipe
+
+// !!! dans redirection manager j'ai baisser mon nb_redirs -> retirer
+
 /*
-**	This function takes as parameter:
+**	This function takes as parameter: 
 **
 **
 ** =====================================================
@@ -23,7 +35,7 @@
 */
 
 /*
-**	This function takes as parameter:
+**	This function takes as parameter: 
 **
 **	data -> the struct who contains all variables
 **  to exec our program
@@ -35,29 +47,28 @@
 **  with the function ft_do_process (we also get the path)
 **  then we go to ft_pipex to start the execution
 */
-
+// pour les commande non valide, mettre u flag dans un tableau qui dit si elles sont executable
 int	pipex_exec(t_data	*data)
 {
 	int		i;
 	char	**cmd_argument;
 
-	data->index_redirs = ((i = 0));
 	cmd_argument = NULL;
+	data->index_redirs = ((i = 0));
 	fprintf(stderr, "je passe par multi\n");
-	// fprintf(stderr, "je test la commande complete sans redirection\n");
-	// int		j = 0;
-	// while (data->redir_tab[j])
-	// {
-	// 	fprintf(stderr, "voici mon pipe cpmplet %s \n", data->redir_tab[j]);
-	// 	j++;
-	// }
-	if (ft_check_access(data, i) == -1)
-		return (-1);
-	fprintf(stderr, "\n\n\n\n");
-	fprintf(stderr, "len_db_tab(data->cmds) %d\n", len_db_tab(data->cmds));
 	i = 0;
+	if (ft_check_access(data, i) == -1)
+		return (free_all_fd(data), 0);
+	if (data->n_redirs > 0)
+		if (set_first_end(data) == -1)
+			return (fprintf(stderr, "problem with malloc\n"), -1);
 	ft_pipex(data, i, cmd_argument);
 	ft_freedb(data->actual_path);
+	if (data->n_redirs > 0)
+	{
+		free(data->first);
+		free(data->last);
+	}
 	return (0);
 }
 
@@ -71,23 +82,108 @@ int	ft_check_access(t_data *data, int i)
 		return (-1);
 	while (data->cmds[i])
 	{
-		data->actual_path[i] = malloc(sizeof(char) * (ft_strlen(data->cmds[i]) + 1));
-		if (!data->actual_path[i])
-			return (-1);
 		buf = arg(data->cmds[i], data);
+		fprintf(stderr, "voici buf %s et voici cmds %s\n", buf, data->cmds[i]);
+		if (!data->pr->nv)
+			return (fprintf(stderr, "problem with env\n"), -1);
 		data->actual_path[i] = ft_do_process(data->pr->nv, buf);
 		if (!data->actual_path[i])
-		{
-			while (i > 0)
-				free(data->actual_path[i--]);
-			perror("wrong commd\n");
-			return (free(data->actual_path), free(buf), -1);
-		}
+			data->cmd_valid[i] = -1;
 		free(buf);
 		i++;
 	}
 	data->actual_path[i] = NULL;
 	return (0);
+}
+
+/*
+**	This function takes as parameter:
+**
+**	data = the structure
+**
+** =====================================================
+** =====================================================
+**
+**	this function set the first redirection and the
+**	final of each pipe
+**
+*/
+
+int	set_first_end(t_data *data)
+{
+	int		i;
+	int		j;
+	int		count;
+
+	i = ((count = 0));
+	data->first = malloc(sizeof(int) * data->n_redirs);
+	data->last = malloc(sizeof(int) * data->n_redirs);
+	if (!data->first || !data->last)
+		return (-1);
+	data->index_fd = -1;
+	j = 0;
+	while (data->cmds[i])
+	{
+		if (i > 0)
+			count = get_act_redir(data, i);
+		if (check_if_redir(data, i) == 0)
+		{
+			data->first[j] = first_redirect(data, data->cmds[i], count);
+			data->last[j] = last_redirect(data, data->cmds[i], count);
+			j++;
+		}
+		i++;
+	}
+	return (0);
+}
+
+// peut etre modifier la fonction en dessous
+// j'essaye de regler si il n'y a pas de redirection
+// dans un pipe
+int	check_if_redir(t_data *data, int i)
+{
+	int		j;
+
+	j = 0;
+	while (data->cmds[i][j])
+	{
+		// if (is_in_quotes(data->cmds[i], j) > 0)
+		// {
+		if (data->cmds[i][j] == '>'
+		|| data->cmds[i][j] == '<')
+			return (0);
+		// }
+		j++;
+	}
+	return (-1);
+}
+
+int	get_act_redir(t_data *data, int i)
+{
+	int		count;
+	int		j;
+	int		c;
+
+	j = ((c = 0));
+	count = 0;
+	if (c < i)
+	{
+		while (c < i)
+		{
+			j = 0;
+			while (data->cmds[c][j])
+			{
+				if ((data->cmds[c][j] == '>'
+				|| data->cmds[c][j] == '<')
+				&& (data->cmds[c][j + 1] != '>'
+				|| data->cmds[c][j + 1] != '<'))
+					count++;
+				j++;
+			}
+			c++;
+		}
+	}
+	return (count);
 }
 
 /*

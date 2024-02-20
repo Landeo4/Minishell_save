@@ -6,13 +6,13 @@
 /*   By: vsozonof <vsozonof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/28 22:20:24 by vsozonof          #+#    #+#             */
-/*   Updated: 2024/01/30 02:45:14 by vsozonof         ###   ########.fr       */
+/*   Updated: 2024/02/12 09:27:49 by vsozonof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	create_side_env(t_prompt *ptr)
+int	create_side_env(t_prompt *ptr)
 {
 	int		i;
 	t_env	*tmp;
@@ -21,14 +21,17 @@ void	create_side_env(t_prompt *ptr)
 	tmp = ptr->env;
 	ptr->nv = malloc(sizeof(char *) * (env_len(ptr->env) + 1));
 	if (!ptr->nv)
-		return ;
+		return (set_status(ptr->data, 12, "malloc error.", NULL), 0);
 	while (tmp)
 	{
 		ptr->nv[i] = ft_strdup(tmp->var);
+		if (!ptr->nv[i])
+			return (set_status(ptr->data, 12, "malloc error.", NULL), 0);
 		i++;
 		tmp = tmp->next;
 	}
 	ptr->nv[i] = NULL;
+	return (1);
 }
 
 int	env_len(t_env *env)

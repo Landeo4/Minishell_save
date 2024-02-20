@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   env_utils.c                                        :+:      :+:    :+:   */
+/*   env_utils-1.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
+/*   By: vsozonof <vsozonof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 05:50:43 by vsozonof          #+#    #+#             */
-/*   Updated: 2024/01/26 23:25:00 by tpotilli         ###   ########.fr       */
+/*   Updated: 2024/02/19 15:49:36 by vsozonof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,16 +16,20 @@ char	*ft_get_env(t_env *env, char *str)
 {
 	int		len;
 	t_env	*nav;
+	char	*to_find;
 
 	nav = env;
-	len = ft_strlen(str);
+	to_find = ft_strjoin(str, "=");
+	len = ft_strlen(to_find);
 	while (nav)
 	{
-		if (!ft_strncmp(nav->var, str, len))
-			return (ft_substr(nav->var, (len + 1), ft_strlen(nav->var)));
+		if (!ft_strncmp(nav->var, to_find, len))
+			return (free(to_find),
+				ft_substr(nav->var, (len), ft_strlen(nav->var)));
 		else
 			nav = nav->next;
 	}
+	free(to_find);
 	return (NULL);
 }
 
@@ -74,16 +78,16 @@ int	put_env_to_lst(t_env *env, char **envp)
 	return (1);
 }
 
-void	ft_printlst(t_env *L)
+void	ft_printlst(t_input *L)
 {
 	if (L == NULL)
 	{
 		printf("La liste est vide.\n");
 		return ;
 	}
-	while (L && L->next)
+	while (L)
 	{
-		ft_printf("-> %s\n", L->var);
+		ft_printf("-> %s\n", L->str);
 		L = L->next;
 	}
 }

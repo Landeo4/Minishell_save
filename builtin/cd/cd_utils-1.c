@@ -6,7 +6,7 @@
 /*   By: vsozonof <vsozonof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/21 05:27:00 by vsozonof          #+#    #+#             */
-/*   Updated: 2024/01/30 09:25:19 by vsozonof         ###   ########.fr       */
+/*   Updated: 2024/02/13 08:11:31 by vsozonof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,9 +64,9 @@ void	error_handling(int err, char *str, t_data *data)
 	if (err == 2)
 		printf("minishell: cd: %s: No such file or directory.\n", str);
 	else if (err == 20)
-		printf("minishell: cd: %s: is not a directory.", str);
+		printf("minishell: cd: %s: is not a directory.\n", str);
 	else if (err == 13)
 		printf("minishell: cd: %s: Permission denied.\n", str);
 	free(str);
-	exit_status_updater(data, err, NULL, NULL);
+	set_status(data, err, NULL, NULL);
 }

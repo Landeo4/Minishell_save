@@ -1,54 +1,56 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pp_utils.c                                         :+:      :+:    :+:   */
+/*   redir_utils-5.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/01/22 13:11:39 by tpotilli          #+#    #+#             */
-/*   Updated: 2024/02/07 15:42:32 by tpotilli         ###   ########.fr       */
+/*   Created: 2024/02/14 10:22:47 by vsozonof          #+#    #+#             */
+/*   Updated: 2024/02/19 10:26:30 by tpotilli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	len_fd_tab(char **str, int i)
-{
-	int		j;
-
-	j = 0;
-	while (str[i][j])
-		j++;
-	return (j);
-}
-
-int	found_max(char	*argv[])
+int	get_double_tab_len(char **splitted)
 {
 	int	i;
 
 	i = 0;
-	while (argv[i])
+	while (splitted[i])
 		i++;
 	return (i);
 }
 
-int	verif_arg_fd(char	*argv[], int i)
+int	cmd_counter(char **splitted)
 {
-	int		fd;
+	int	i;
+	int	count;
 
-	fd = open(argv[i], O_RDONLY, 0644);
-	if (fd < 0)
-		return (-1);
-	return (fd);
+	i = 0;
+	count = 0;
+	while (splitted[i])
+	{
+		if (splitted[i][0] == '<' || splitted[i][0] == '>')
+			count -= 2;
+		i++;
+		count++;
+	}
+	return (count);
 }
 
-//O_WRONLY | O_CREAT | O_TRUNC
-int	ft_create_fd(char	*argv, int flag)
+void	heredoc_counter(t_data *data)
 {
-	int	fd;
+	int	i;
 
-	fd = open(argv, flag, 0644);
-	if (fd < 0)
-		return (printf("problem with fd\n"), -1);
-	return (fd);
+	i = 0;
+	while (data->input[i])
+	{
+		if (data->input[i] == '<' && data->input[i + 1] == '<')
+		{
+			i += 2;
+			data->nb_here_doc++;
+		}
+		i++; 
+	}
 }

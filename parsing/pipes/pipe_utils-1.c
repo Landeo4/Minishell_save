@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipe_utils.c                                       :+:      :+:    :+:   */
+/*   pipe_utils-1.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vsozonof <vsozonof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/26 06:15:38 by vsozonof          #+#    #+#             */
-/*   Updated: 2024/01/26 23:06:28 by vsozonof         ###   ########.fr       */
+/*   Updated: 2024/02/12 08:54:08 by vsozonof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,30 +31,39 @@ int	ispipe(int c)
 		return (0);
 }
 
-int	multiple_pipe_checker(char *str, int i)
+int	multiple_pipe_checker(char *str, int i, t_data *data)
 {
 	if (ispipe(str[i]) && ispipe(str[i + 1]) && !ispipe(str[i + 2]))
-		return (pr_error("`||' operator not handled"));
+	{
+		set_status(data, 2, "`||' operator not handled", NULL);
+		return (0);
+	}
 	else if (ispipe(str[i]) && ispipe(str[i + 1]) && ispipe(str[i + 2]))
-		return (pr_error("syntax error near unexpected token `||'"));
+	{
+		set_status(data, 2, "syntax error near unexpected token `||'", NULL);
+		return (0);
+	}
 	return (1);
 }
 
-int	is_valid_pipe(char *str)
+int	is_valid_pipe(char *str, t_data *data)
 {
 	int	i;
 
 	i = 0;
 	while (str[i] && ft_is_whitespace(str[i]))
 		i++;
-	if (!multiple_pipe_checker(str, i))
+	if (!multiple_pipe_checker(str, i, data))
 		return (0);
 	else if (ispipe(str[i]))
-		return (pr_error("syntax error near unexpected token `|'"));
+	{
+		set_status(data, 2, "syntax error near unexpected token `|'", NULL);
+		return (0);
+	}
 	while (str[i])
 	{
 		if (!is_in_quotes(str, i))
-			if (ispipe(str[i]) && !multiple_pipe_checker(str, i))
+			if (ispipe(str[i]) && !multiple_pipe_checker(str, i, data))
 				return (0);
 		i++;
 	}

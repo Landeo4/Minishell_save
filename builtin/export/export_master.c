@@ -6,7 +6,7 @@
 /*   By: vsozonof <vsozonof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/23 12:49:13 by tpotilli          #+#    #+#             */
-/*   Updated: 2024/01/30 00:31:40 by vsozonof         ###   ########.fr       */
+/*   Updated: 2024/02/08 09:56:22 by vsozonof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,20 +45,11 @@ char	*export_finalizer(char *args, int i, t_data *data)
 	char		*var_name;
 	char		*var_value;
 	char		*new_arg;
-	static int	flag;
 
 	new_arg = ft_substr(args, i, ft_strlen(args));
 	var_name = extract_var_name(args, i);
 	if (!is_valid_var_first_char(var_name[0]))
-	{
-		if (!flag)
-		{
-			flag += 1;
-			printf("minishell: export:`%s': is not a valid identifier\n",
-				var_name);
-		}
 		return (free(var_name), free(args), new_arg);
-	}
 	var_value = extract_var_value(args, i);
 	do_export(var_name, var_value, data);
 	free(args);

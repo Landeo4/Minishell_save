@@ -6,16 +6,14 @@
 /*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 13:10:29 by tpotilli          #+#    #+#             */
-/*   Updated: 2024/02/06 16:50:14 by tpotilli         ###   ########.fr       */
+/*   Updated: 2024/02/18 19:35:52 by tpotilli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	check_dup(int pipe, int token, int pipe2, t_data *data)
+int	check_dup(int pipe, int token, int pipe2)
 {
-	(void)data;
-	fprintf(stderr, "mon token est donc %d\n", token);
 	if (token == 0)
 	{
 		if (dup2(0, 0) < 0)
@@ -43,8 +41,10 @@ int	check_dup(int pipe, int token, int pipe2, t_data *data)
 // regler le probleme des fd
 int	child_process_in(int **pipefd, t_data *data, int i, int token)
 {
-	char		*buf;
+	// char		*buf;
+	int			verif;
 
+	verif = 0;
 	if (i == 0 || i == data->n_cmds -1)
 	{
 		if (child_process_in_or_out(pipefd, data, i, token) == -1)
@@ -52,13 +52,13 @@ int	child_process_in(int **pipefd, t_data *data, int i, int token)
 	}
 	else if (token == 0 || token == 1)
 	{
-		if (child_process_middle(pipefd, data, token) == -1)
+		if (child_process_middle(pipefd, token, verif) == -1)
 			return (-1);
 	}
 	data->nb_redirs_ac = get_nb_redirs_ac(data->cmds[i]);
 	if (check_redirection_now(data, i) == 0)
-		redirection_manager(data, i); // !!!! regler les cas ou ca echoue
-	buf = arg(data->cmds[i], data);
+		redirection_manager(data, i);
+	// buf = arg(data->cmds[i], data);
 	free(pipefd[0]);
 	free(pipefd[1]);
 	return (0);
@@ -76,7 +76,7 @@ int	child_process_in_or_out(int	**pi, t_data *data, int i, int token)
 		close(pi[0][0]);
 		close(pi[1][0]);
 		close(pi[1][1]);
-		if (check_dup(0, 0, pi[0][1], data) == -1)
+		if (check_dup(0, 0, pi[0][1]) == -1)
 			return (close(pi[0][1]), free_all_pipe(pi), -1);
 		close(pi[0][1]);
 	}
@@ -85,9 +85,9 @@ int	child_process_in_or_out(int	**pi, t_data *data, int i, int token)
 		close(pi[1][1]);
 		close(pi[0][1]);
 		if (token == 0)
-			verif = check_dup(pi[1][0], 1, 0, data);
+			verif = check_dup(pi[1][0], 1, 0);
 		else
-			verif = check_dup(pi[0][0], 1, 0, data);
+			verif = check_dup(pi[0][0], 1, 0);
 		close(pi[1][0]);
 		close(pi[0][0]);
 		if (verif == -1)
@@ -96,15 +96,14 @@ int	child_process_in_or_out(int	**pi, t_data *data, int i, int token)
 	return (0);
 }
 
-int	child_process_middle(int **pipefd, t_data *data, int token)
+// ATTENTION ICI VERIF N'EST PAS BON
+int	child_process_middle(int **pipefd, int token, int verif)
 {
-	int		verif;
-
 	if (token == 0)
 	{
 		close(pipefd[1][1]);
 		close(pipefd[0][0]);
-		verif = check_dup(pipefd[1][0], 2, pipefd[0][1], data);
+		verif = check_dup(pipefd[1][0], 2, pipefd[0][1]);
 		close(pipefd[1][0]);
 		close(pipefd[0][1]);
 		if (verif == -1)
@@ -114,14 +113,31 @@ int	child_process_middle(int **pipefd, t_data *data, int token)
 	{
 		close(pipefd[0][1]);
 		close(pipefd[1][0]);
-		verif = check_dup(pipefd[0][0], 2, pipefd[1][1], data);
+		verif = check_dup(pipefd[0][0], 2, pipefd[1][1]);
 		close(pipefd[0][0]);
 		close(pipefd[1][1]);
 		if (verif == -1)
-			return (free_all_pipe(pipefd), -1);
+		{
+			free_all_pipe(pipefd);
+			return (-1);
+		}
 	}
 	return (0);
 }
+
+/*
+**	This function takes as parameter: 
+**
+**	str = a string
+**	data = the structure
+**
+** =====================================================
+** =====================================================
+**
+**	this function is used to create a new string where
+**	there is no redirection
+**
+*/
 
 char	*arg(char *str, t_data *data)
 {
@@ -130,8 +146,10 @@ char	*arg(char *str, t_data *data)
 	char	*tmp;
 
 	tmp = NULL;
-	i = ft_strlen(str);
+	i = ft_strlen(str) - 1;
 	buf = ft_split(str, ' ');
+	if (!buf)
+		return (NULL);
 	if (data->n_redirs > 0)
 	{
 		if (data->tab[data->index_redirs])
@@ -141,6 +159,11 @@ char	*arg(char *str, t_data *data)
 		}
 	}
 	tmp = copy_arg(tmp, buf[0]);
+	if (!tmp)
+	{
+		fprintf(stderr, "a problem happend\n");
+		return (ft_freedb(buf), NULL);
+	}
 	ft_freedb(buf);
 	return (tmp);
 }

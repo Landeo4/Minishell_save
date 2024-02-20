@@ -6,7 +6,7 @@
 /*   By: vsozonof <vsozonof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/12 13:58:47 by vsozonof          #+#    #+#             */
-/*   Updated: 2024/01/30 10:06:58 by vsozonof         ###   ########.fr       */
+/*   Updated: 2024/02/09 07:48:54 by vsozonof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,5 +20,6 @@ int	ft_split_free(char **str)
 	while (str[++i])
 		free(str[i]);
 	free(str);
+	str = NULL;
 	return (0);
 }

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pipes_splitter.c                                   :+:      :+:    :+:   */
+/*   pipe_splitter.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: vsozonof <vsozonof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 05:50:20 by vsozonof          #+#    #+#             */
-/*   Updated: 2024/01/16 01:27:42 by vsozonof         ###   ########.fr       */
+/*   Updated: 2024/02/08 08:12:13 by vsozonof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,8 +69,7 @@ char	**ft_pipe_splitter(char **tab, const char *s, char c, size_t pos)
 	size_t	string_index;
 	size_t	string_letter;
 
-	string_index = 0;
-	string_letter = 0;
+	string_index = ((string_letter = 0));
 	while (s[pos])
 	{
 		tab[string_index] = malloc(sizeof(char) * word_len(s, c, pos));
@@ -86,6 +85,8 @@ char	**ft_pipe_splitter(char **tab, const char *s, char c, size_t pos)
 		string_letter = 0;
 		string_index++;
 		while (s[pos] == c && s[pos])
+			pos++;
+		if (s[pos - 1] == '|' && ft_is_whitespace(s[pos]))
 			pos++;
 	}
 	tab[string_index] = NULL;

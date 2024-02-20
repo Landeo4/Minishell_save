@@ -6,7 +6,7 @@
 #    By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/09 23:22:06 by vsozonof          #+#    #+#              #
-#    Updated: 2024/02/07 11:01:43 by tpotilli         ###   ########.fr        #
+#    Updated: 2024/02/19 14:27:10 by tpotilli         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,12 +25,14 @@ SRCS_LIB = libft/libft.a \
 
 SRCS = main.c \
 	   parsing/get_input.c \
-	   parsing/init_struct.c \
+	   parsing/init/init_master.c \
 	   parsing/input_parser.c \
 	   parsing/exception_checker.c \
 	   parsing/redirs/redir_utils-1.c \
 	   parsing/redirs/redir_utils-2.c \
 	   parsing/redirs/redir_utils-3.c \
+	   parsing/redirs/redir_utils-4.c \
+	   parsing/redirs/redir_utils-5.c \
 	   parsing/expand/expand_master.c \
 	   parsing/expand/expand_utils-1.c \
 	   parsing/expand/expand_utils-2.c \
@@ -49,14 +51,18 @@ SRCS = main.c \
 	   exec/UNUSED_command_overall.c \
 	   exec/execute_pp.c \
 	   exec/main_pp.c \
+	   exec/heredoc.c \
 	   exec/pp_free.c \
+	   exec/pp_free2.c \
 	   exec/pp_utils.c \
 	   exec/pp_utils2.c \
 	   exec/pp_utils3.c \
 	   exec/pp.c \
+	   exec/pp_helper.c \
 	   exec/single_arg.c \
 	   exec/child_pp.c \
 	   exec/redirection_here.c \
+	   exec/redirection_found.c \
 	   exec/redirection_arg.c \
 	   exec/redirection_dup.c \
 	   exec/here_doc.c \
@@ -69,10 +75,9 @@ SRCS = main.c \
 	   builtin/export/export_utils-1.c \
 	   builtin/export/export_utils-2.c \
 	   builtin/export/export_utils-3.c \
-	   builtin/export/export_utils-4.c \
 	   builtin/pwd/pwd_master.c \
 	   builtin/env/env_master.c \
-	   builtin/exit.c \
+	   builtin/exit/exit.c \
 
 OBJS = $(SRCS:.c=.o)
 

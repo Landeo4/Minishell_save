@@ -6,7 +6,7 @@
 /*   By: vsozonof <vsozonof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/03 07:44:02 by vsozonof          #+#    #+#             */
-/*   Updated: 2023/05/06 16:44:00 by vsozonof         ###   ########.fr       */
+/*   Updated: 2024/02/13 11:03:24 by vsozonof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,42 @@
 
 //------------------------------------------------------------------------------
 
+long long int	ft_atoll_2(const char *str)
+{
+	long long int	var;
+	int				i;
+	int				sign;
+
+	i = 0;
+	sign = 1;
+	var = 0;
+	if (!(str))
+		return (0);
+	while (str[i] == ' ' || (str[i] >= 9 && str[i] <= 13))
+		i++;
+	if (str[i] == '+' || str[i] == '-')
+	{
+		if (str[i] == '-')
+			sign = -1;
+		i++;
+	}
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		var = (var * 10) + (str[i] - '0');
+		i++;
+	}
+	return (var * sign);
+}
+
 int	ft_int_overflow_checker(char *str)
 {
-	if (ft_strlen(str) > 11)
-		return (pr_error("Integer overflow/underflow detected."));
+	int	i;
+
+	i = ft_strlen(str);
+	if (str[0] == '+' || str[0] == '-')
+		i--;
+	if (i > 19)
+		return (0);
 	else if (ft_integer_checker(str) != 1)
 		return (0);
 	return (1);
@@ -41,12 +73,12 @@ int	ft_int_overflow_checker(char *str)
 
 int	ft_integer_checker(char *str)
 {
-	long	n;
+	long long int	n;
 
-	n = ft_atol(str);
-	if (n > INT_MAX)
-		return (pr_error("Integer overflow detected."));
-	else if (n < INT_MIN)
-		return (pr_error("Integer underflow detected."));
+	n = ft_atoll_2(str);
+	if (n > LLONG_MAX)
+		return (0);
+	else if (n < LLONG_MIN)
+		return (0);
 	return (1);
 }

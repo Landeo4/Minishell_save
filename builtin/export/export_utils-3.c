@@ -6,7 +6,7 @@
 /*   By: vsozonof <vsozonof@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/29 04:12:21 by vsozonof          #+#    #+#             */
-/*   Updated: 2024/01/29 06:27:03 by vsozonof         ###   ########.fr       */
+/*   Updated: 2024/02/14 09:06:40 by vsozonof         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,4 +39,12 @@ void	export_error_handler(char *str, char *to_check, char *rest)
 			i = 0;
 		}
 	}
+}
+
+int	is_valid_var_first_char(int c)
+{
+	if (ft_isalpha(c) || c == '_')
+		return (1);
+	else
+		return (0);
 }

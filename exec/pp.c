@@ -6,7 +6,7 @@
 /*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 13:11:05 by tpotilli          #+#    #+#             */
-/*   Updated: 2024/02/07 11:13:14 by tpotilli         ###   ########.fr       */
+/*   Updated: 2024/02/20 13:59:43 by tpotilli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,66 +20,52 @@
 // 3 = db_gauche
 // 4 = droite
 
-int	ft_pipex(t_data	*data, int i,char **cmd_argument)
+int	ft_pipex(t_data	*data, int i, char **cmd_argument)
 {
-	pid_t		pid[data->n_cmds];
+	pid_t		*pid;
 	int			**pipefd;
-	char		*essaie;
+	(void)i;
 
-	pipefd = NULL;
-	pipefd = alloc_pipe(i, pipefd);
-	if (!pipefd[1] || !pipefd[0])
-		return (free(pipefd), -1);
-	fprintf(stderr, "============DEBUT DE PP\n============");
+	pid = malloc(sizeof(pid_t) * data->n_cmds); //voir comment free le pid dans un child
+	if (!pid)
+		return (fprintf(stderr, "problem with malloc\n"), -1);
+	pipefd = alloc_pipe(i);
+	if (!pipefd || !pipefd[1] || !pipefd[0])
+		return (free(pid), free(pipefd), -1);
+	ft_pipex_helper(data, pid, pipefd, cmd_argument);
+	wait_and_free(data, pipefd, pid);
+	return (0);
+}
+
+int	ft_pipex_helper(t_data *data, int *pid, int **pipefd, char **cmd_argument)
+{
+	int		i;
+
+	i = 0;
 	while (i < data->n_cmds)
 	{
-		fprintf(stderr, "JE SUIS A MA %d\n", i);
-		fprintf(stderr, "mon input = %s\n", data->cmds[i]);
+		if (get_nb_redirs_ac(data->cmds[i]) > 0)
+			data->index_fd++;
 		pid[i] = fork();
 		if (pid[i] < 0)
 			return (printf("erreur de fork\n"), 1);
 		if (pid[i] == 0)
 		{
-			if (i % 2 == 0)
-				child_process_in(pipefd, data, i, 0);
-			else if (i % 2 == 1)
-				child_process_in(pipefd, data, i, 1);
-			if (check_redirection_now(data, i) == 0)
-				essaie = data->redir_tab[i];
-			else
-				essaie = data->cmds[i];
-			fprintf(stderr, "essaie = %s\n", essaie);
-			cmd_argument = ft_split(essaie, ' ');
-			int q = 0;
-			while (data->actual_path[q])
+			if (child_process(data, pipefd, i, cmd_argument) == -1)
 			{
-				// fprintf(stderr, "cmd_arg = %s\n", cmd_argument[q]);
-				fprintf(stderr, "data->actual_path[%d] = %s\n", q, data->actual_path[q]);
-				q++;
+				free(pid);
+				free(pipefd);
+				free_end_of_program(data->pr);
+				exit(0);
 			}
-			q = 0;
-			fprintf(stderr, "juste avant mon execve mon i = %d et path %s\n", i, data->actual_path[i]);
-			execve(data->actual_path[i], cmd_argument, data->pr->nv);
-			free_all_pipe(pipefd);
-			exit(0);
 		}
 		else
 			pipefd = parent_process(pipefd, i);
 		i++;
 		data->i = i;
 	}
-	i = 0;
-	while (i < data->n_cmds)
-	{
-		waitpid(pid[i], NULL, 0);
-		i++;
-	}
-	free_all_pipe(pipefd);
-	free_all_fd(data);
 	return (0);
 }
-
-
 
 /*
 **	This function takes as parameter: 
@@ -95,20 +81,37 @@ int	ft_pipex(t_data	*data, int i,char **cmd_argument)
 **
 */
 
-int	**alloc_pipe(int i, int **pipefd)
+/*
+**	This function takes as parameter: 
+**
+**	pipefd: an array of pipe
+**	i: to know where i am in pipe
+**	(if i am equal to 0 i'm pair)
+**
+** =====================================================
+** =====================================================
+**
+**	this function will allocate two array of pipe
+**
+*/
+
+int	**alloc_pipe(int i)
 {
+	int		**pipefd;
+
+	pipefd = NULL;
 	if (i == 0)
 	{
 		pipefd = malloc(sizeof(int *) * 2);
 		if (!pipefd)
-			return (fprintf(stderr, "probleme happend in alloc_pipe"), NULL);
+			return (fprintf(stderr, "probleme happend in alloc_pipe\n"), NULL);
 		pipefd[0] = malloc(sizeof(int) * 2);
 		pipefd[1] = malloc(sizeof(int) * 2);
 		if (!pipefd[0] || !pipefd[1])
 		{
 			free(pipefd[0]);
 			free(pipefd[1]);
-			return (pipefd);
+			return (fprintf(stderr, "problem when creating the pipe"), NULL);
 		}
 		pipe(pipefd[0]);
 		pipe(pipefd[1]);
