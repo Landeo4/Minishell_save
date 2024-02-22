@@ -6,7 +6,7 @@
 /*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/09 23:35:12 by vsozonof          #+#    #+#             */
-/*   Updated: 2024/02/20 14:03:07 by tpotilli         ###   ########.fr       */
+/*   Updated: 2024/02/21 09:31:16 by tpotilli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@
 # include <sys/types.h>
 # include <sys/wait.h>
 # include <errno.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 
 # ifndef G_STATUS
 #  define G_STATUS
@@ -302,6 +304,8 @@ void	free_all_alloc(t_data *data);
 void	free_single_struct_and_arg(t_data *data, char **cmd_argument, char *fre);
 void	free_multi_struct_and_arg(t_data *data, char **cmd_argument, int **pipefd);
 void	close_all_redirs(t_data *data);
+int		get_and_print_statuscode();
+
 // ! ---------------------------------------------------------------------------
 // ?							Chain list
 // ! ---------------------------------------------------------------------------

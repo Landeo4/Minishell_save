@@ -6,7 +6,7 @@
 /*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/06 12:31:19 by tpotilli          #+#    #+#             */
-/*   Updated: 2024/02/20 14:20:35 by tpotilli         ###   ########.fr       */
+/*   Updated: 2024/02/21 12:10:19 by tpotilli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,8 +27,6 @@ char	*ft_do_process(char *envp[], char *cmd)
 	path = ft_get_path(envp);
 	if (!path)
 		return (NULL);
-	if (!path)
-		return (NULL);
 	while (path[i++])
 	{
 		buf2 = ft_strjoin_help(path, cmd, i);
@@ -42,7 +40,8 @@ char	*ft_do_process(char *envp[], char *cmd)
 	ft_split_free(path);
 	return (NULL);
 }
-
+//X_OK Tests whether the file can be accessed for execution.
+// -> verifie si on a les droits
 int	ft_do_process_helper(char *cmd)
 {
 	if (access(cmd, X_OK) == 0)

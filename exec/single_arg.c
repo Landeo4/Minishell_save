@@ -6,7 +6,7 @@
 /*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 18:55:02 by tpotilli          #+#    #+#             */
-/*   Updated: 2024/02/20 13:52:53 by tpotilli         ###   ########.fr       */
+/*   Updated: 2024/02/22 07:51:25 by tpotilli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -124,6 +124,13 @@ int	exec_single(char **cmd_argument, char *fre, t_data	*data)
 		{
 			if (redirection_single(data) == -1)
 				return (-1);
+		}
+		fprintf(stderr, "fre = %s\n", fre);
+		int j = 0;
+		while (cmd_argument[j])
+		{
+			fprintf(stderr, "cmd = %s\n", cmd_argument[j]);
+			j++;
 		}
 		execve(fre, cmd_argument, data->pr->nv);
 		free(fre);

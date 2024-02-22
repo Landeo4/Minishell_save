@@ -6,7 +6,7 @@
 /*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 13:10:50 by tpotilli          #+#    #+#             */
-/*   Updated: 2024/02/20 14:48:04 by tpotilli         ###   ########.fr       */
+/*   Updated: 2024/02/21 08:17:35 by tpotilli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ int	ft_check_access(t_data *data, int i)
 			return (fprintf(stderr, "problem with env\n"), -1);
 		data->actual_path[i] = ft_do_process(data->pr->nv, buf);
 		if (!data->actual_path[i])
-			data->cmd_valid[i] = -1;
+			data->actual_path[i] = data->cmds[i];
 		free(buf);
 		i++;
 	}

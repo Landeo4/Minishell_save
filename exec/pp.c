@@ -6,7 +6,7 @@
 /*   By: tpotilli <tpotilli@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/22 13:11:05 by tpotilli          #+#    #+#             */
-/*   Updated: 2024/02/20 13:59:43 by tpotilli         ###   ########.fr       */
+/*   Updated: 2024/02/21 10:13:41 by tpotilli         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,14 +53,19 @@ int	ft_pipex_helper(t_data *data, int *pid, int **pipefd, char **cmd_argument)
 		{
 			if (child_process(data, pipefd, i, cmd_argument) == -1)
 			{
-				free(pid);
-				free(pipefd);
-				free_end_of_program(data->pr);
-				exit(0);
+				// fprintf(stderr, "salut\n");
+				// get_and_print_statuscode();
+				// free(pid);
+				// free(pipefd);
+				// free_end_of_program(data->pr);
 			}
 		}
 		else
+		{
 			pipefd = parent_process(pipefd, i);
+			fprintf(stderr, "salut\n");
+			get_and_print_statuscode();
+		}
 		i++;
 		data->i = i;
 	}
